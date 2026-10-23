@@ -19,7 +19,7 @@ cp .env.example .env
 cp brain.example.json brain.json
 ```
 
-If a copy exists, run `git pull` inside it. All commands below run from the repository root.
+If a copy exists, run `git pull` inside it. Below, `<app>` is the folder of that clone: the app's files are not part of this skill, they live there.
 
 ## 2. Keys
 
@@ -44,16 +44,16 @@ Never invent a competitor or a profile URL. If the user has no list yet, ask for
 ## 4. Run a hunt
 
 ```bash
-python3 engine/hunt.py all --run runs/$(date +%Y-%m-%d) --platforms linkedin
+python3 <app>/engine/hunt.py all --run runs/$(date +%Y-%m-%d) --platforms linkedin
 ```
 
-Add `instagram` or `youtube` to `--platforms` only when their keys exist. LinkedIn over 20 accounts takes 5-10 minutes. The user can also run it from the page: `python3 server.py --open`, then the run button.
+Add `instagram` or `youtube` to `--platforms` only when their keys exist. LinkedIn over 20 accounts takes 5-10 minutes. The user can also run it from the page: `python3 <app>/server.py --open`, then the run button.
 
 Report what the log says plainly: accounts with 0 posts, HTTP errors (401 = wrong key, 402 = no credits), the Jev cost line. An account with 0 posts is "could not collect or silent, check by hand", never "this competitor does not use LinkedIn".
 
 ## 5. Read the result
 
-Open `runs/<id>/result.json`. Each item in `pieces` has the author (`competitor`), `format`, reach, breakout against the author's median, and `jev` with `topic_lane`, `hook_type`, `icp_fit`, `replicable`. Skip `off_niche` and sponsored posts. Keep the user's own `(ви)` accounts as the benchmark and out of the competitor slices.
+Open `<app>/runs/<id>/result.json`. Each item in `pieces` has the author (`competitor`), `format`, reach, breakout against the author's median, and `jev` with `topic_lane`, `hook_type`, `icp_fit`, `replicable`. Skip `off_niche` and sponsored posts. Keep the user's own `(ви)` accounts as the benchmark and out of the competitor slices.
 
 Write the summary in the user's language, in this order:
 
