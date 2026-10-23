@@ -76,6 +76,14 @@ python3 engine/hunt.py all --run runs/2026-10-20 --platforms linkedin,instagram
 | мапа порожня одразу після запуску сервера | сторінка відкрилась раніше, ніж сервер підняв результат. Оновіть сторінку |
 | чип Jev сірий | немає `OPENROUTER_API_KEY` або на рахунку менше $0,15 |
 
+## Скіл для Claude
+
+У репозиторії є скіл `competitor-post-scout`: Claude сам налаштує `brain.json` з вашого ICP, запустить прогін і напише коротку карту постів конкурентів.
+
+```bash
+npx skills add victor-shulga/competitor-post-scout
+```
+
 ## Ліцензія
 
 Застосунок побудований на відкритому проєкті competitor-hunter (Charles J Dove, MIT): додано LinkedIn, українську мову інтерфейсу, зрізи й загальні теми для B2B-агенцій. Деталі в `vendor/NOTICE.md` і `LICENSE`.
