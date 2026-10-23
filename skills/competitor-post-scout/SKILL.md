@@ -1,6 +1,6 @@
 ---
 name: competitor-post-scout
-description: Finds which LinkedIn, Instagram and YouTube posts of your competitors worked in the last 80 days and turns them into topics, hooks and formats for your own content and positioning. Sets up the local competitor-post-scout app (clone, keys in .env, brain.json with your ICP and 10-20 competitors), runs a hunt from the command line, reads runs/<id>/result.json and writes a short competitor content map - top posts, hit rate by topic, hook and format, topics nobody covers. A hit is a post with at least twice its own author's median reach. Use when someone says "пости конкурентів", "що постять конкуренти", "які пости конкурентів спрацювали", "competitor posts", "competitor content", "content gap", "карта конкурентів", or works on lesson 05.3 of the AI-native outreach course. NOT for a full competitor analysis of websites, ads and SEO (that is the competitor-analysis instruction of the course).
+description: Finds which LinkedIn, Instagram and YouTube posts of your competitors worked in the last 80 days and turns them into topics, hooks and formats for your own content and positioning. Sets up the local competitor-post-scout app (clone, keys in .env, brain.json with your ICP and 10-20 competitors), runs a hunt from the command line, reads runs/<id>/result.json and writes a short competitor content map - top posts, hit rate by topic, hook and format, topics nobody covers. A hit is a post with at least twice its own author's median reach. Use when someone says "пости конкурентів", "що постять конкуренти", "які пости конкурентів спрацювали", "competitor posts", "competitor content", "content gap", "карта конкурентів", or works on lesson 03.9 of the AI-native outreach course. NOT for a full competitor analysis of websites, ads and SEO (that is the competitor-analysis instruction of the course).
 ---
 
 # Competitor post scout
@@ -39,7 +39,7 @@ Fill `brain.json` from what the user already has (their ICP document, site, offe
 - `icp`: buyer segments, pain points, goals. Jev scores audience fit against this, so vague text here gives vague scores.
 - `competitors`: the user's own accounts first, each name ending in `(ви)`; then 10-20 competitors of a similar size and their founders. LinkedIn takes company pages (`/company/...`) and personal profiles (`/in/...`). In service companies founders usually post more than the company page, so add both.
 
-Never invent a competitor or a profile URL. If the user has no list yet, ask for it or point them to lesson 05.1 (search, ads, Clutch).
+Never invent a competitor or a profile URL. If the user has no list yet, ask for it or point them to lesson 03.7 (search, ads, Clutch).
 
 ## 4. Run a hunt
 
