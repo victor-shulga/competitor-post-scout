@@ -1,0 +1,4 @@
+/* Brand layer on top of the base styles. Empty by default: the app uses its neutral look.
+   To use your own brand, override tokens here, for example:
+   :root { --accent: #E85A4F; --accent-rgb: 232, 90, 79; --font: "Inter", sans-serif; } */
+body { font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif; }

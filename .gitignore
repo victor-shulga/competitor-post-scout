@@ -1,0 +1,21 @@
+# keys and machine-local state never go into git
+.env
+local.json
+brain.json
+settings.json
+roster.json
+yt-token.json
+voice.md
+server.log
+
+# hunt output (big: thumbnails, transcripts) stays on the machine that ran it
+runs/
+reports/
+library/
+studio/
+jev/history/
+
+__pycache__/
+*.pyc
+*.tmp
+.DS_Store

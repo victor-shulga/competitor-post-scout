@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пости конкурентів</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23161513'/%3E%3Ccircle cx='50' cy='50' r='18' fill='%23ffffff'/%3E%3C/svg%3E">
+<script>try { document.documentElement.dataset.theme = localStorage.getItem('ch-theme') || 'light'; } catch (e) {}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/brand.css">
+<style id="mobile-guard">
+  .kpis>*,.grid2>*,.grid3>*,.split>*,.panel,.kpi,.card{min-width:0}
+  .panel svg,.panel canvas,.panel img,.card svg,.card canvas,.card img{max-width:100%}
+  .tbl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  @media (max-width:1024px){
+    .panel table,.card table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+  }
+  @media (max-width:760px){
+    .grid2,.grid3,.split{grid-template-columns:minmax(0,1fr)!important}
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .filters{flex-wrap:wrap}
+    .filters select,.filt select{min-width:0;max-width:100%}
+  }
+  @media (max-width:480px){
+    .kpis{grid-template-columns:minmax(0,1fr)!important}
+    .kpis>*{grid-column:auto!important}
+  }
+</style>
+</head>
+<body>
+
+<nav class="global-nav" aria-label="Головне меню">
+  <a class="brand" href="#top">Пости конкурентів</a>
+  <ul class="nav-links">
+    <li><a href="#top">Прогін</a></li>
+    <li><a href="#results">Результати</a></li>
+    <li><a href="#saved-window" id="nav-saved">Збережене</a></li>
+    <li><a href="#ask">Спитати AI</a></li>
+    <li><a href="#reports">Звіти</a></li>
+    <li><a href="/studio">Моя студія</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a class="nav-btn" href="/studio">Моя студія</a>
+    <button class="nav-btn" id="ask-btn" type="button">Спитати AI</button>
+    <button class="nav-btn" id="theme-btn" type="button" aria-label="Світла чи темна тема">Темна</button>
+    <button class="nav-btn" id="settings-btn" type="button" aria-expanded="false" aria-controls="settings">Налаштування</button>
+  </div>
+</nav>
+
+<section class="tile tile-light settings" id="settings" hidden>
+  <div class="wrap narrow">
+    <h2 class="display">Налаштування</h2>
+    <p class="lead">Усе, що можна змінити, тут.</p>
+    <form class="settings-form" id="settings-form">
+      <div class="field">
+        <label for="model-select">Модель Claude</label>
+        <select id="model-select"></select>
+        <p class="help">Веде прогін, пише розбори, відповідає в «Спитати AI». Діє з наступного прогону.</p>
+      </div>
+      <div class="field" id="model-custom-field" hidden>
+        <label for="model-custom">Своя модель (id)</label>
+        <input id="model-custom" type="text" autocomplete="off" spellcheck="false" placeholder="claude-opus-5-5">
+      </div>
+      <div class="field">
+        <label for="theme-select">Тема</label>
+        <select id="theme-select"><option value="light">Світла</option><option value="dark">Темна</option></select>
+      </div>
+      <div class="field">
+        <label for="subs-input">Спільноти Reddit</label>
+        <input id="subs-input" type="text" autocomplete="off" spellcheck="false" placeholder="agency, sales, consulting">
+        <p class="help">Топ-пости тижня з цих спільнот після прогону з'являться як додаткові ідеї для тем.</p>
+      </div>
+      <div class="field">
+        <span class="label">Вікно прогону</span>
+        <p class="static"><span id="window-days">80</span> днів назад, щоразу.</p>
+      </div>
+      <button class="btn-primary" type="submit">Зберегти</button>
+      <p class="notice" id="settings-notice" role="status"></p>
+      <p class="help" id="settings-meta"></p>
+    </form>
+  </div>
+</section>
+
+<main id="top">
+  <section class="tile tile-light hero">
+    <div class="wrap">
+      <ul class="health" id="health" aria-label="Готовність системи"></ul>
+      <div class="hero-head">
+        <h1 class="hero-title">Що працює в конкурентів</h1>
+        <p class="hero-sub" id="hero-sub">Пости конкурентів за 80 днів, оцінка Jev, найкраще першим.</p>
+      </div>
+      <ul class="hero-stats" id="hero-stats" aria-label="Зведення останнього прогону"></ul>
+
+      <fieldset class="platforms">
+        <legend>Де шукати</legend>
+        <label class="toggle"><input type="checkbox" name="platform" value="youtube" checked><span>YouTube <b id="count-youtube"></b></span></label>
+        <label class="toggle"><input type="checkbox" name="platform" value="instagram" checked><span>Instagram <b id="count-instagram"></b></span></label>
+        <label class="toggle"><input type="checkbox" name="platform" value="linkedin" checked><span>LinkedIn <b id="count-linkedin"></b></span></label>
+      </fieldset>
+
+      <div class="actions">
+        <button class="btn-primary big" id="run" type="button"><span class="run-label">Запустити прогін</span></button>
+        <button class="btn-secondary" id="stop" type="button" hidden>Зупинити</button>
+        <span class="elapsed" id="elapsed" aria-live="off"></span>
+      </div>
+      <p class="notice" id="notice" role="status"></p>
+
+      <ol class="phases" id="phases" aria-label="Етапи">
+        <li data-phase="scrape"><span class="phase-name">1. Збір</span><span class="phase-note">Усі пости за 80 днів</span></li>
+        <li data-phase="pilot"><span class="phase-name">2. Калібрування</span><span class="phase-note">Claude перевіряє питання для Jev</span></li>
+        <li data-phase="judge"><span class="phase-name">3. Оцінка</span><span class="phase-note">Jev оцінює кожен пост</span></li>
+        <li data-phase="rank"><span class="phase-name">4. Рейтинг</span><span class="phase-note">Найкращі першими</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="tile tile-dark map-tile">
+    <div class="wrap">
+      <h2 class="display">Мапа конкурентів</h2>
+      <p class="lead">Вище = більше охоплення за 80 днів. Правіше = сильніші сплески відносно власного рівня. Правий верхній кут = за ким стежити.</p>
+      <div class="scope">
+        <canvas id="radar" aria-label="Мапа конкурентів. Правіше = більший відрив, вище = більше охоплення, більша позначка = вищий ER. Кола = YouTube, ромби = Instagram, квадрати = LinkedIn."></canvas>
+        <dl class="readout">
+          <div><dt>Конкурентів</dt><dd id="read-targets">0</dd></div>
+          <div><dt>Зібрано з</dt><dd id="read-acquired">0</dd></div>
+          <div><dt>Постів</dt><dd id="read-pieces">0</dd></div>
+          <div><dt>Стан</dt><dd id="read-status">Очікує</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="tile tile-light roster-tile">
+    <div class="wrap">
+      <h2 class="display">Конкуренти</h2>
+      <p class="lead" id="roster-meta"></p>
+      <form class="roster-form" id="roster-form">
+        <input id="roster-input" type="text" autocomplete="off" spellcheck="false" placeholder="Посилання на YouTube, Instagram чи LinkedIn або @хендл" aria-label="Додати конкурента">
+        <fieldset class="seg">
+          <legend>Голий @хендл це</legend>
+          <label><input type="radio" name="roster-platform" value="youtube" checked><span>YouTube</span></label>
+          <label><input type="radio" name="roster-platform" value="instagram"><span>Instagram</span></label>
+          <label><input type="radio" name="roster-platform" value="linkedin"><span>LinkedIn</span></label>
+        </fieldset>
+        <button class="btn-primary" type="submit">Додати</button>
+      </form>
+      <p class="notice" id="roster-notice" role="status"></p>
+      <ul class="roster-list" id="roster-list"></ul>
+    </div>
+  </section>
+
+  <section class="tile tile-parchment log-tile" id="log-window" hidden>
+    <div class="wrap">
+      <h2 class="display">Що відбувається</h2>
+      <p class="help" id="log-meta"></p>
+      <ol class="log-lines" id="log" aria-live="polite"></ol>
+    </div>
+  </section>
+
+  <section id="results" hidden>
+    <section class="tile tile-parchment">
+      <div class="wrap">
+        <h2 class="display">Останній прогін</h2>
+        <ul class="kpis" id="kpis"></ul>
+      </div>
+    </section>
+
+    <section class="tile tile-light">
+      <div class="wrap">
+        <h2 class="display">Хто попереду</h2>
+        <p class="lead" id="ladder-note"></p>
+        <div class="ladders">
+          <div class="card ladder" id="ladder-views"></div>
+          <div class="card ladder" id="ladder-er"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tile tile-parchment">
+      <div class="wrap">
+        <h2 class="display">Найкращі пости, з яких варто вчитися</h2>
+        <p class="lead">Рейтинг за тим, наскільки пост перевершив звичайний рівень автора і наскільки підходить вашій аудиторії. Рекламу відсіяно.</p>
+        <div class="filters" id="filters"></div>
+        <div class="targets" id="targets"></div>
+        <div class="more"><button class="btn-secondary" id="more" type="button">Показати ще 12</button></div>
+      </div>
+    </section>
+
+    <section class="tile tile-light" id="cuts-tile">
+      <div class="wrap">
+        <h2 class="display">Зрізи</h2>
+        <p class="cuts-meta" id="cuts-meta"></p>
+        <div class="cuts" id="cuts"></div>
+      </div>
+    </section>
+
+    <section class="tile tile-light" id="reddit-tile">
+      <div class="wrap">
+        <h2 class="display">Ідеї з Reddit</h2>
+        <p class="lead" id="reddit-note">Топ-пости тижня з ваших спільнот. На мапі їх немає: це додаткові теми, які люди вже обговорюють.</p>
+        <ol class="reddit-list" id="reddit-list"></ol>
+      </div>
+    </section>
+
+    <section class="tile tile-parchment saved" id="saved-window">
+      <div class="wrap">
+        <h2 class="display">Збережене</h2>
+        <p class="lead">Натисніть «Зберегти» на будь-якому пості вище. Потім його можна розшифрувати, переглянути покадрово або спитати про нього AI. Каруселі зберігаються зі слайдами.</p>
+        <div class="folder-bar" id="folder-bar"></div>
+        <p class="notice" id="saved-notice" role="status"></p>
+        <div class="saved-grid" id="saved-grid"></div>
+      </div>
+    </section>
+
+    <section class="tile tile-light">
+      <div class="wrap">
+        <details class="card" id="jev-panel"></details>
+        <details class="card" id="paid-panel"></details>
+      </div>
+    </section>
+  </section>
+
+  <section class="tile tile-light" id="reports">
+    <div class="wrap">
+      <h2 class="display">Звіти</h2>
+      <p class="lead" id="reports-note">Усе з теки звітів, нові першими: прогони цього тула, аналізи ваших постів і те, що записали /viral-discover чи /viral-audit з термінала.</p>
+      <div class="filters" id="reports-filters"></div>
+      <ul class="report-list" id="report-list"></ul>
+    </div>
+  </section>
+
+  <section class="tile tile-light empty" id="empty" hidden>
+    <div class="wrap narrow center">
+      <h2 class="display">Прогонів ще не було</h2>
+      <p class="lead">Натисніть <b>Запустити прогін</b>. Результати з'являться тут.</p>
+    </div>
+  </section>
+
+  <section class="tile tile-dark ask" id="ask" hidden>
+    <div class="wrap">
+      <h2 class="display">Спитати AI</h2>
+      <p class="lead">Оберіть, про що говоримо, і питайте: теми, хуки, яким має бути ваш наступний пост.</p>
+      <div class="ask-grid">
+        <aside class="ask-side">
+          <h3 class="tagline">У цьому чаті</h3>
+          <label class="check"><input type="checkbox" id="ask-top" checked><span>Топ-12 постів останнього прогону</span></label>
+          <label class="check"><input type="checkbox" id="ask-reddit"><span>Ідеї з Reddit цього тижня</span></label>
+          <label class="check"><input type="checkbox" id="ask-reports"><span>3 останні звіти</span></label>
+          <ul class="ask-cards" id="ask-cards"></ul>
+          <h3 class="tagline">Збережені пости</h3>
+          <ul class="ask-saved" id="ask-saved"></ul>
+          <h3 class="tagline">Попередні чати</h3>
+          <ul class="ask-chats" id="ask-chats"></ul>
+          <button class="btn-secondary" id="ask-new" type="button">Новий чат</button>
+        </aside>
+        <div class="ask-main">
+          <ol class="thread" id="ask-thread" aria-live="polite"></ol>
+          <form class="ask-form" id="ask-form">
+            <textarea id="ask-input" rows="3" placeholder="Про що має бути мій наступний пост?" aria-label="Ваше питання"></textarea>
+            <span class="ask-buttons"><button class="btn-primary" id="ask-send" type="submit">Спитати</button><button class="btn-secondary" id="ask-abort" type="button" hidden>Перервати</button></span>
+          </form>
+          <p class="notice" id="ask-notice" role="status"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="tile tile-parchment footer">
+  <div class="wrap"><p class="fine">Competitor Hunter працює на вашому Mac. Оцінює Jev, пише Claude. Назовні йдуть лише збір даних і запити до моделей.</p></div>
+</footer>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+<div class="modal" id="report-drawer" hidden></div>
+<script src="/insights.js"></script>
+<script src="/app.js"></script>
+<script src="/library.js"></script>
+<script src="/ask.js"></script>
+<style id="info-tips-css">
+  .info-btn{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;
+    border:1.5px solid currentColor;color:#9AA3AF;background:none;padding:0;margin-left:8px;cursor:pointer;
+    font:italic 700 11px/1 Georgia,'Times New Roman',serif;vertical-align:middle;position:relative;letter-spacing:0;text-transform:none}
+  .info-btn:hover,.info-btn:focus-visible,.info-btn.open{color:#1F2328;outline:none}
+  .info-pop{display:none;position:absolute;z-index:60;top:26px;left:0;width:min(440px,86vw);background:#1B1B1B;color:#E9E9E9;
+    font:400 13px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,sans-serif;font-style:normal;text-align:left;
+    padding:14px 16px;border-radius:10px;box-shadow:0 10px 28px rgba(0,0,0,.22);white-space:normal;text-transform:none;letter-spacing:0}
+  .info-pop b,.info-pop strong{color:#FFFFFF}
+  .info-pop::before{content:"";position:absolute;top:-6px;left:var(--arrow,6px);border:6px solid transparent;border-top:0;border-bottom-color:#1B1B1B}
+  .info-btn:hover .info-pop,.info-btn:focus-visible .info-pop,.info-btn.open .info-pop{display:block}
+</style>
+<script id="info-tips-js">
+(function(){
+  function hostFor(el){
+    if(el.classList.contains('howto')) return document.querySelector('h1');
+    var n=el.previousElementSibling;
+    while(n){ if(/^H[1-3]$/.test(n.tagName)) return n; var h=n.querySelector&&n.querySelector('h2,h3'); if(h&&/p-head|sec-head/.test(n.className)) return h; n=n.previousElementSibling; }
+    var panel=el.closest('.panel,.mini,section'); return panel?panel.querySelector('h2,h3'):null;
+  }
+  function place(btn,pop){
+    pop.style.left='0'; var r=pop.getBoundingClientRect(), over=r.right-(window.innerWidth-12);
+    if(over>0){ pop.style.left=(-over)+'px'; pop.style.setProperty('--arrow',(over+6)+'px'); } else pop.style.setProperty('--arrow','6px');
+  }
+  function build(){
+    document.querySelectorAll('.foot,.howto,p.note').forEach(function(el){
+      if(el.dataset.tip) return; var host=hostFor(el); if(!host) return;
+      el.dataset.tip='1'; el.style.display='none';
+      var btn=document.createElement('button'); btn.type='button'; btn.className='info-btn'; btn.setAttribute('aria-label','Пояснення'); btn.textContent='i';
+      var pop=document.createElement('span'); pop.className='info-pop'; pop.setAttribute('role','tooltip'); btn.appendChild(pop);
+      var fill=function(){ pop.innerHTML=el.innerHTML; place(btn,pop); };
+      btn.addEventListener('mouseenter',fill); btn.addEventListener('focus',fill);
+      btn.addEventListener('click',function(e){ e.stopPropagation(); fill(); btn.classList.toggle('open'); });
+      host.appendChild(btn);
+    });
+  }
+  document.addEventListener('click',function(){ document.querySelectorAll('.info-btn.open').forEach(function(b){b.classList.remove('open');}); });
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',build); else build();
+  window.addEventListener('load',build);
+})();
+</script>
+
+</body>
+</html>

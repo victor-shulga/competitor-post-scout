@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Моя студія</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23161513'/%3E%3Ccircle cx='50' cy='50' r='18' fill='%23ffffff'/%3E%3C/svg%3E">
+<script>try { document.documentElement.dataset.theme = localStorage.getItem('ch-theme') || 'light'; } catch (e) {}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/brand.css">
+</head>
+<body>
+
+<nav class="global-nav" aria-label="Головне меню">
+  <a class="brand" href="/">Пости конкурентів</a>
+  <ul class="nav-links">
+    <li><a href="/">Головна</a></li>
+    <li><a href="#analytics">Моя аналітика</a></li>
+    <li><a href="#posts">Мої пости</a></li>
+    <li><a href="#topics">Теми</a></li>
+    <li><a href="#board">Дошка</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a class="nav-btn on" href="/studio">Моя студія</a>
+    <a class="nav-btn" href="/#ask">Спитати AI</a>
+    <button class="nav-btn" id="theme-btn" type="button" aria-label="Перемкнути світлу або темну тему">Темна</button>
+    <a class="nav-btn" href="/#settings">Налаштування</a>
+  </div>
+</nav>
+
+<main>
+  <section class="tile tile-light" id="analytics">
+    <div class="wrap">
+      <h1 class="hero-display">Моя студія</h1>
+      <p class="lead">Ваші канали, ваші цифри та ідеї, що з них виростають.</p>
+      <ul class="health" id="health"></ul>
+      <ul class="kpis" id="kpis"></ul>
+      <div class="actions">
+        <fieldset class="platforms">
+          <legend>Звідки брати дані</legend>
+          <label class="toggle"><input type="checkbox" name="platform" value="youtube" checked><span>YouTube</span></label>
+          <label class="toggle"><input type="checkbox" name="platform" value="instagram" checked><span>Instagram</span></label>
+        </fieldset>
+      </div>
+      <div class="actions">
+        <button class="btn-primary big" id="run-mine" type="button"><span class="run-label">Проаналізувати мій контент</span></button>
+        <button class="btn-secondary" id="abort-mine" type="button" hidden>Зупинити</button>
+        <span class="elapsed job-line" id="mine-status"></span>
+      </div>
+      <p class="help">Той самий рушій, що й прогін конкурентів, тільки спрямований на вас. Jev оцінює кожен пост; бал поєднує попит (відрив, взаємодії, охоплення) з конверсією: нові підписники на 10 тис. переглядів у YouTube, збереження й поширення на 100 переглядів в Instagram.</p>
+      <p class="notice" id="mine-notice" role="status"></p>
+    </div>
+  </section>
+
+  <section class="tile tile-parchment" id="posts">
+    <div class="wrap">
+      <h2 class="display">Що у вас спрацювало</h2>
+      <p class="lead" id="posts-note">Запустіть аналіз, щоб побачити свої пости, впорядковані за конверсією та попитом.</p>
+      <div class="filters" id="posts-filters"></div>
+      <div class="targets" id="posts-grid"></div>
+      <div class="more"><button class="btn-secondary" id="posts-more" type="button" hidden>Показати ще 12</button></div>
+    </div>
+  </section>
+
+  <section class="tile tile-light" id="topics">
+    <div class="wrap">
+      <h2 class="display">Теми</h2>
+      <p class="lead">AI складає топ-10 з ваших результатів, збережених постів конкурентів, останнього прогону й Reddit. Ті, що сподобалися, додайте на дошку.</p>
+      <div class="actions">
+        <button class="btn-primary" id="topics-longform" type="button">Топ-10 ідей для довгих відео</button>
+        <button class="btn-primary" id="topics-short" type="button">Топ-10 ідей для коротких відео</button>
+        <span class="elapsed job-line" id="topics-status"></span>
+      </div>
+      <p class="notice" id="topics-notice" role="status"></p>
+      <div class="filters" id="topics-reports"></div>
+      <div class="ideas" id="ideas"></div>
+    </div>
+  </section>
+
+  <section class="tile tile-parchment" id="board">
+    <div class="wrap">
+      <h2 class="display">Дошка</h2>
+      <p class="lead">Перетягуйте картки між колонками. Позначайте готове, додавайте нотатки й посилання на натхнення. Картки довгих відео вміють написати сценарій та ідеї обкладинок.</p>
+      <form class="board-add" id="board-add">
+        <input type="text" id="board-title" placeholder="Додайте власну ідею" aria-label="Назва нової ідеї" autocomplete="off">
+        <select id="board-format" aria-label="Формат"><option value="longform">Довге відео</option><option value="short">Коротке відео</option></select>
+        <button class="btn-primary" type="submit">Додати</button>
+      </form>
+      <p class="notice" id="board-notice" role="status"></p>
+      <div class="kanban" id="kanban"></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="drawer" hidden></div>
+<script src="/studio.js"></script>
+</body>
+</html>

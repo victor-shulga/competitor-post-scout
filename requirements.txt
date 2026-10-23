@@ -1,0 +1,2 @@
+# The hunt itself: Python 3.10+ standard library + httpx (LinkedIn via HarvestAPI)
+httpx>=0.27

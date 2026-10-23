@@ -1,0 +1,27 @@
+{
+  "_comment": "Скопіюйте у brain.json (cp brain.example.json brain.json) і заповніть. Першими в competitors ідуть ваші власні акаунти з позначкою (ви) в назві: так видно, де ви стоїте серед конкурентів.",
+  "identity": {
+    "name": "Назва вашої агенції",
+    "brand": "your-agency.com",
+    "niche": "що ви робите і для кого, одним рядком",
+    "tone": ["прямо", "з цифрами"],
+    "differentiator": "що ви робите інакше, ніж решта ринку"
+  },
+  "icp": {
+    "segments": ["хто купує: посади й тип компаній з вашого ICP"],
+    "pain_points": ["біль покупця, через який він шукає підрядника"],
+    "goals": ["результат, за який покупець платить"]
+  },
+  "pillars": [
+    { "name": "Тема 1", "description": "про що ви пишете в цій темі", "keywords": ["ключове слово"] }
+  ],
+  "competitors": [
+    { "name": "Ваша компанія (ви)", "platform": "LinkedIn", "handle": "https://www.linkedin.com/company/your-agency/" },
+    { "name": "Засновник (ви)", "platform": "LinkedIn", "handle": "https://www.linkedin.com/in/your-profile/" },
+    { "name": "Конкурент 1", "platform": "LinkedIn", "handle": "https://www.linkedin.com/company/competitor-one/" },
+    { "name": "Засновник конкурента 1", "platform": "LinkedIn", "handle": "https://www.linkedin.com/in/competitor-founder/" },
+    { "name": "Конкурент 2", "platform": "YouTube", "handle": "@competitortwo" },
+    { "name": "Конкурент 3", "platform": "Instagram", "handle": "@competitorthree" }
+  ],
+  "learning_weights": { "icp_relevance": 1.0, "timeliness": 1.0, "content_gap": 1.0, "proof_potential": 1.0 }
+}

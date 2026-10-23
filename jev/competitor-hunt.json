@@ -1,0 +1,108 @@
+{
+ "name": "competitor-posts",
+ "version": 1,
+ "description": "Judge one competitor post (LinkedIn, Instagram or YouTube) for the B2B service company in creator_profile: topic lane, audience fit, hook, proof, replicable, sponsored, news-pegged.",
+ "model": "typesafe/jev-1.13",
+ "state_fields": [
+  "creator_profile",
+  "platform",
+  "format",
+  "duration_min",
+  "title",
+  "description"
+ ],
+ "display_fields": [
+  "title"
+ ],
+ "questions": {
+  "topic_lane": {
+   "type": "choice",
+   "exhaustive": true,
+   "instructions": "What is the main subject of the post, judged from `title` (its first line) first and `description` (the full post text or caption) second?",
+   "criteria": {
+    "method": "Teaches a method, framework, checklist, template or step-by-step process that the reader could apply in their own business.",
+    "client_result": "Shows a project, case study, launch or measured result the company delivered for a client, or a client testimonial or review.",
+    "market_view": "An opinion about the market, industry trends, predictions, pricing in the industry or commentary on news, without a step-by-step method.",
+    "offer_pitch": "Describes the company's own services or offer, or invites the reader to book a call, join a webinar, download a resource or apply.",
+    "founder_story": "A personal story or lesson of the founder or the team that is tied to running the business: mistakes, decisions, milestones.",
+    "off_niche": "Anything else: hiring, team photos, events, holidays, personal life unrelated to business, generic motivation or news unrelated to the company's audience."
+   }
+  },
+  "icp_fit": {
+   "type": "score",
+   "instructions": "How directly does the post (`title`, `description`) serve the buyers named in `creator_profile` (its ICP segments, their pain points and goals)?",
+   "criteria": [
+    "Off target: gives these buyers nothing to use.",
+    "Adjacent: a topic aimed at peers, job seekers or other agencies, with no use for these buyers stated.",
+    "On target: shows a method, a warning sign, a checklist or a model these buyers could apply to a problem from `creator_profile`.",
+    "Bullseye: names a business outcome for such a buyer (money or time saved, a launch date, revenue, a risk avoided) and the method that produced it."
+   ]
+  },
+  "hook_type": {
+   "type": "choice",
+   "instructions": "Which hook pattern opens `title` (the first line of the post)? When two patterns appear, pick the one that appears first in `title`.",
+   "criteria": {
+    "contradiction": "Denies a common belief or tells the viewer to stop doing something: stop, don't, is dead, is lying, wrong, nobody tells you.",
+    "number_specific": "Leads with a specific number, count, or dollar amount as the draw: 84 skills, $1M, 10x, 3 steps, 7 tools.",
+    "newsjack": "Leads with a product, model, or feature presented as new: just dropped, just released, new, a version number.",
+    "outcome_build": "Leads with something the creator built or a result they got: I built, how I, my system, I replaced.",
+    "how_to": "Leads with an instruction or a tutorial promise: how to, full guide, course, tutorial, setup, step by step.",
+    "other": "None of the patterns above."
+   }
+  },
+  "proof": {
+   "type": "score",
+   "instructions": "How much visible proof does the post give in `description`?",
+   "criteria": [
+    "Opinion, advice or news only: no tool, system or example is shown.",
+    "Names a specific tool, template or setup, or tells one concrete example.",
+    "Walks through a full system or process step by step, or shares the template itself.",
+    "Shows a measured result: money or time saved, load time before and after, launch in N days, revenue, a count."
+   ]
+  },
+  "replicable": {
+   "type": "noul",
+   "instructions": "Could the company in `creator_profile` publish its own version of this post with its own projects, numbers and process, without needing the original author's personal story, private data, audience size or a sponsor's product?"
+  },
+  "sponsored": {
+   "type": "noul",
+   "instructions": "Is the whole post a paid promotion or a partnership for one named company's product (marked as sponsored, a brand partnership, a discount code or a 'thanks to X for partnering'), as stated in `description`, rather than the author's own topic with at most a passing tool mention?"
+  },
+  "newsjack": {
+   "type": "noul",
+   "instructions": "Is the post pegged to a product release or announcement that was new when it was posted (a new model, a new feature, a version number, 'just launched', 'just dropped'), judged from `title` and `description`?"
+  }
+ },
+ "thresholds": {
+  "topic_lane": 0.6,
+  "icp_fit": 0.5,
+  "hook_type": 0,
+  "proof": 0,
+  "replicable": {
+   "low": 0.5,
+   "high": 0.5
+  },
+  "sponsored": {
+   "low": 0.5,
+   "high": 0.5
+  },
+  "newsjack": {
+   "low": 0.5,
+   "high": 0.5
+  }
+ },
+ "rules": [
+  {
+   "name": "off_niche_has_no_fit",
+   "when": {
+    "topic_lane": "off_niche"
+   },
+   "set": {
+    "icp_fit": 0
+   }
+  }
+ ],
+ "tuning_notes": [
+  "v1: generic lanes for B2B service companies. Rename the lanes or rewrite icp_fit for your niche; keep the off_niche label."
+ ]
+}
