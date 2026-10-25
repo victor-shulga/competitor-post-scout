@@ -128,7 +128,8 @@ def openrouter_key():
 
 def child_env():
     """Explicit environment for Claude Code and the engine: never whatever the parent happened to inherit."""
-    env = {k: os.environ[k] for k in ("PATH", "HOME", "USER", "LOGNAME", "SHELL", "LANG", "TMPDIR") if os.environ.get(k)}
+    env = {k: os.environ[k] for k in ("PATH", "HOME", "USER", "LOGNAME", "SHELL", "LANG", "TMPDIR", "CH_LOCAL",
+                                      "HARVESTAPI_KEY", "APIFY_API_TOKEN", "YOUTUBE_DATA_API_KEY") if os.environ.get(k)}
     env["OPENROUTER_API_KEY"] = openrouter_key()
     return env
 
@@ -431,6 +432,13 @@ def studio_payload():
 # ----------------------------------------------------------------------------
 # Read-side helpers
 # ----------------------------------------------------------------------------
+def reveal(path):
+    """Show the folder in Finder or the Linux file manager; without either, the page still gets the path."""
+    opener = shutil.which("open") or shutil.which("xdg-open")
+    if opener:
+        subprocess.Popen([opener, path])
+
+
 def latest_result():
     done = [p for p in RUNS.glob("*/result.json") if not p.parent.name.startswith("me-")] if RUNS.exists() else []
     return max(done, key=lambda p: p.stat().st_mtime) if done else None
@@ -520,7 +528,13 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def local_host(self):
+        # A rebinding DNS name points at 127.0.0.1 but still sends its own Host: refuse it.
+        return self.headers.get("Host") in ("%s:%d" % (HOST, PORT), "localhost:%d" % PORT)
+
     def do_GET(self):
+        if not self.local_host():
+            return self.send_json({"error": "open the app at http://%s:%d" % (HOST, PORT)}, 403)
         url = urlparse(self.path)
         query = parse_qs(url.query)
         if url.path == "/":
@@ -611,6 +625,8 @@ class Handler(BaseHTTPRequestHandler):
             return
 
     def do_POST(self):
+        if not self.local_host():
+            return self.send_json({"error": "open the app at http://%s:%d" % (HOST, PORT)}, 403)
         # Same-origin JSON only: a page on another site must not be able to start a run.
         origin = self.headers.get("Origin")
         if origin and urlparse(origin).netloc not in ("%s:%d" % (HOST, PORT), "localhost:%d" % PORT):
@@ -682,7 +698,7 @@ class Handler(BaseHTTPRequestHandler):
                         return self.send_json({"error": "That post is already being analyzed."}, 409)
                 elif action == "download":
                     path, count = library.download_slides(post_id)
-                    subprocess.Popen(["open", path])                  # show the folder in Finder
+                    reveal(path)
                     extra = {"path": path, "count": count}
                 else:
                     return self.send_json({"error": "not found"}, 404)
@@ -744,7 +760,7 @@ class Handler(BaseHTTPRequestHandler):
                         return self.send_json({"error": "Already being made."}, 409)
                 elif action == "download":
                     path, count = studio.download_thumbnails(str(body.get("id") or ""))
-                    subprocess.Popen(["open", path])
+                    reveal(path)
                     extra = {"path": path, "count": count}
                 elif action == "abort":
                     key = str(body.get("job") or "")

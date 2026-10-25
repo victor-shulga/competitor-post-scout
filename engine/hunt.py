@@ -246,6 +246,8 @@ def write_json(path, data):
 
 def env_optional(name):
     """Like env_value, but None when the key (or the whole .env) is missing."""
+    if os.environ.get(name):
+        return os.environ[name]
     try:
         for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
             if line.startswith(name + "=") and line.split("=", 1)[1].strip():
@@ -256,7 +258,9 @@ def env_optional(name):
 
 
 def env_value(name):
-    for line in ENV_FILE.read_text(encoding="utf-8").splitlines():
+    if os.environ.get(name):            # an exported key wins, the same order vendor/scrape/keys.py uses
+        return os.environ[name]
+    for line in (ENV_FILE.read_text(encoding="utf-8") if ENV_FILE.is_file() else "").splitlines():
         if line.startswith(name + "="):
             return line.split("=", 1)[1].strip().strip('"').strip("'")
     die("%s is not set in %s" % (name, ENV_FILE))

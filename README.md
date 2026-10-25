@@ -84,6 +84,14 @@ python3 engine/hunt.py all --run runs/2026-10-20 --platforms linkedin,instagram
 npx skills add victor-shulga/competitor-post-scout
 ```
 
+## Тести
+
+```bash
+python3 -m unittest discover tests
+```
+
+Перевіряє етап `rank`: пост з найбільшим відривом від медіани автора стоїть першим, реклама відсіяна.
+
 ## Ліцензія
 
 Застосунок побудований на відкритому проєкті competitor-hunter (Charles J Dove, MIT): додано LinkedIn, українську мову інтерфейсу, зрізи й загальні теми для B2B-агенцій. Деталі в `vendor/NOTICE.md` і `LICENSE`.
