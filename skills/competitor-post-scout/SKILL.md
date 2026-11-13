@@ -7,6 +7,19 @@ description: Finds which LinkedIn, Instagram and YouTube posts of your competito
 
 The app lives in this repository. This skill only drives it: setup, one hunt, and a readable summary. Every content judgment comes from the app's own model (Jev). Do not re-judge posts yourself.
 
+## Required tools
+
+Install these before running the skill. It still runs without the ones marked **Required**, but the result gets noticeably worse: without the two API keys the hunt does not start at all, and without the Instagram and YouTube keys the map covers LinkedIn only.
+
+| Tool | Used for | Required? | Without it |
+|---|---|---|---|
+| Claude Code | cloning the app, running `hunt.py`, reading `runs/<id>/result.json` | Required | in claude.ai the skill can only explain the steps; the user runs every command |
+| Python 3 + git | the app itself (`pip3 install -r requirements.txt`) | Required | the app does not install or run |
+| HarvestAPI key | collecting competitors' LinkedIn posts | Required | no LinkedIn posts, nothing to score |
+| OpenRouter key | Jev, the app's model that judges topic, hook and ICP fit | Required | posts are collected but not judged; no hit rate by topic or hook |
+| Apify token | Instagram posts | Recommended | Instagram is left out of the map |
+| YouTube Data API key or yt-dlp | YouTube videos | Recommended | YouTube is left out of the map |
+
 ## 1. Get the app
 
 If the user has no copy yet:
